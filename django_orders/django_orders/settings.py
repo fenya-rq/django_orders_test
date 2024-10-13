@@ -29,7 +29,7 @@ SECRET_KEY = env.str("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.str("DEBUG")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS: list[str] | list = []
 
 
 # Application definition
@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'products',
+    'orders',
+    'payments',
 ]
 
 MIDDLEWARE = [
@@ -119,8 +122,13 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+STATIC_ROOT = BASE_DIR / "file_storage/static"
+STATIC_URL = "/static/"
 
-STATIC_URL = 'static/'
+# Files managing
+FILE_UPLOAD_TEMP_DIR = BASE_DIR / "file_storage/tmp_media"
+MEDIA_ROOT = BASE_DIR / "file_storage/media"
+MEDIA_URL = "/media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

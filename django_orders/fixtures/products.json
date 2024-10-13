@@ -1,0 +1,14 @@
+[
+  {
+    "model":  "products.product",
+    "pk": 1,
+    "fields": {
+      "name": "test_product",
+      "picture": "uploads/2024/10/14/test_image.jpg",
+      "image_width": "600",
+      "image_height": "600",
+      "content": "test info",
+      "price": 200.00
+    }
+  }
+]
