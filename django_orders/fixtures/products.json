@@ -10,5 +10,17 @@
       "content": "test info",
       "price": 200.00
     }
+  },
+  {
+    "model":  "products.product",
+    "pk": 2,
+    "fields": {
+      "name": "test_product2",
+      "picture": "uploads/2024/10/14/test_image.jpg",
+      "image_width": "600",
+      "image_height": "600",
+      "content": "test info2",
+      "price": 500.00
+    }
   }
 ]

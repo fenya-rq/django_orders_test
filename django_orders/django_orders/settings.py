@@ -20,8 +20,6 @@ environ.Env.read_env()
 env = environ.Env()
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env.str("SECRET_KEY")
@@ -79,8 +77,6 @@ WSGI_APPLICATION = 'django_orders.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 DATABASES = {'default': env.db("DB_URL")}
 
 # DRF settings
@@ -90,8 +86,6 @@ REST_FRAMEWORK = {
 }
 
 # Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -109,8 +103,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = 'ru-RU'
 
 TIME_ZONE = 'UTC'
@@ -119,9 +111,11 @@ USE_I18N = True
 
 USE_TZ = True
 
+FIXTURE_DIRS = [
+    BASE_DIR / "fixtures/"
+]
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
+# Static files
 STATIC_ROOT = BASE_DIR / "file_storage/static"
 STATIC_URL = "/static/"
 
@@ -131,6 +125,4 @@ MEDIA_ROOT = BASE_DIR / "file_storage/media"
 MEDIA_URL = "/media/"
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

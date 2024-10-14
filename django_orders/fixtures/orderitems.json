@@ -1,0 +1,20 @@
+[
+  {
+    "model": "orders.orderitem",
+    "pk": 1,
+    "fields": {
+      "order": 1,
+      "product": 1,
+      "quantity": 2
+    }
+  },
+  {
+    "model": "orders.orderitem",
+    "pk": 2,
+    "fields": {
+      "order": 1,
+      "product": 2,
+      "quantity": 3
+    }
+  }
+]

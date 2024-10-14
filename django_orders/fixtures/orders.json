@@ -1,0 +1,12 @@
+[
+  {
+    "model":  "orders.order",
+    "pk": 1,
+    "fields": {
+      "total_cost": 1900,
+      "status": "Ожидает оплаты",
+      "create_dt": "2024-10-10T12:24:46+00:00",
+      "confirm_dt": null
+    }
+  }
+]
