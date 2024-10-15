@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.db.models import QuerySet
 from django.db.models import Sum, F
@@ -52,6 +54,7 @@ class Order(models.Model):
         max_length=20, choices=STATUS_CHOICES, default=PENDING, verbose_name="Статус"
     )
     create_dt = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    payment_dt = models.DateTimeField(default=None, null=True, verbose_name="Дата оплаты")
     confirm_dt = models.DateTimeField(
         default=None, null=True, verbose_name="Время подтверждения"
     )
@@ -88,6 +91,10 @@ class Order(models.Model):
         :return: None
         """
         self.status = self.STATUS_CHOICES[1][0]
+        self.save()
+
+    def update_payment_date(self):
+        self.payment_dt = datetime.datetime.now(tz=datetime.timezone.utc)
         self.save()
 
     class Meta:

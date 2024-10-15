@@ -28,7 +28,7 @@ class Payment(models.Model):
         (PENDING, "В процессе"),
         (COMPLETED, "Выполнен успешно"),
         (FAILED, "Платеж не прошел"),
-        (VOIDED, "Voided"),
+        (VOIDED, "Удален"),
     ]
 
     PAYMENT_METHOD_CHOICES = [
@@ -82,6 +82,9 @@ class Payment(models.Model):
         if self.status == self.STATUS_CHOICES[1][0]:
             self.order.update_status()
 
+    def update_order_payment_date(self):
+        self.order.update_payment_date()
+
     def imitate_payment_processing(self):
         """
         Simulates payment processing by adding a delay and updating
@@ -122,9 +125,11 @@ class Payment(models.Model):
             self.get_cost()
             self.payment_type = random.choice(self.PAYMENT_METHOD_CHOICES)[1]
             super().save()
-        self.imitate_payment_processing()
-        super().save()
-        self.update_order_status()
+        if self.status == self.STATUS_CHOICES[0][0]:
+            self.imitate_payment_processing()
+            super().save()
+            self.update_order_status()
+            self.update_order_payment_date()
 
     def delete(self, using=None, keep_parents=False):
         self.void()
@@ -137,21 +142,3 @@ class Payment(models.Model):
     class Meta:
         verbose_name = "Платеж"
         verbose_name_plural = "Платежи"
-
-
-"""
-
-from products.models import Product
-from orders.models import Order, OrderItem
-from payments.models import Payment
-
-pr = Product.objects.get(pk=1)
-o = Order.objects.get(pk=1)
-o = Order.objects.create()
-p = Payment.objects.create(order=o) 
-
-oi = OrderItem.objects.create(order=o, product=pr, quantity=4)
-oi = OrderItem.objects.get(pk=1)
-
-
-"""
