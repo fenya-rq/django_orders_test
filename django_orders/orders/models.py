@@ -12,6 +12,7 @@ class OrderStatus(models.Model):
     Attributes:
     - status: The status of the order (e.g., 'Pending', 'Paid').
     """
+
     status = models.CharField(max_length=15, verbose_name="Статус заказа")
 
     def __str__(self) -> str:

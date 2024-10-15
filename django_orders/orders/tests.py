@@ -1,7 +1,7 @@
 import pytest
+
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db.utils import DataError, IntegrityError
-from django.db.models import QuerySet
 
 from conftest import _not_existing as nex
 from products.models import Product
@@ -63,7 +63,6 @@ class TestOrderStatuses:
 
 @pytest.mark.django_db
 class TestOrderItem:
-
     @pytest.fixture(autouse=True)
     def setup_method(self, load_fixture):
         """Load required fixtures for OrderItem tests."""

@@ -5,7 +5,6 @@ from .serializers import OrderSerializer
 
 
 class OrderViewSet(ModelViewSet):
-
     http_method_names = ["post"]
     queryset = Order.objects.all().order_by("create_dt")
     serializer_class = OrderSerializer

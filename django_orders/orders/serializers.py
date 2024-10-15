@@ -1,13 +1,10 @@
 from rest_framework import serializers
 
 from products.models import Product
-from products.serializers import ProductSerializer
-
-from .models import Order, OrderStatus, OrderItem
+from .models import Order, OrderItem
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
-
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
 
     class Meta:
@@ -16,7 +13,9 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    total_cost = serializers.DecimalField(max_digits=25, decimal_places=2, read_only=True)
+    total_cost = serializers.DecimalField(
+        max_digits=25, decimal_places=2, read_only=True
+    )
     create_dt = serializers.DateTimeField(read_only=True)
     confirm_dt = serializers.DateTimeField(read_only=True)
     status = serializers.CharField(read_only=True)
@@ -30,5 +29,7 @@ class OrderSerializer(serializers.ModelSerializer):
         products_list = validated_data.pop("orderitem")
         order = Order.objects.create(**validated_data)
         for product in products_list:
-            OrderItem.objects.create(order=order, product=product["product"], quantity=product["quantity"])
+            OrderItem.objects.create(
+                order=order, product=product["product"], quantity=product["quantity"]
+            )
         return order

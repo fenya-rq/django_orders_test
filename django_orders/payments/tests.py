@@ -1,5 +1,5 @@
 import pytest
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import ProtectedError
 
 from conftest import _not_existing as nex
