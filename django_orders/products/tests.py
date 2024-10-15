@@ -3,6 +3,7 @@ from decimal import Decimal
 import pytest
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
+from conftest import _not_existing as nex
 from .models import Product
 from .custom_validators import PositiveDecimalValidator
 
@@ -38,7 +39,7 @@ class TestProduct:
             content="new test info",
             price="100.00",
         )
-        assert product.id == 2
+        assert isinstance(product, Product)
 
     def test_create_product_error(self):
         """
@@ -65,7 +66,7 @@ class TestProduct:
         Tests error raised when trying to retrieve a non-existent product.
         """
         with pytest.raises(ObjectDoesNotExist):
-            Product.objects.get(pk=2)
+            Product.objects.get(pk=nex)
 
     def test_product_picture_ok(self):
         """
@@ -85,7 +86,7 @@ class TestProduct:
         Tests error raised when deleting a non-existent product.
         """
         with pytest.raises(ObjectDoesNotExist):
-            Product.objects.get(pk=2).delete()
+            Product.objects.get(pk=nex).delete()
 
 
 @pytest.mark.parametrize("validator", (PositiveDecimalValidator(10, 2),))

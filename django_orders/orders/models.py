@@ -39,25 +39,16 @@ class Order(models.Model):
     )
 
     def __str__(self) -> str:
-        order_items = self.get_related_products()
-        return (
-            f"ID заказа - {self.id}.\nПродукты: {[f"{item.product.name}" for item in order_items]}."
-            f"\nОбщая сумма заказа: {self.total_cost}.\nДата создания: {self.create_dt}."
-            f"\nСтатус - {self.status}"
-            f"\nВремя подтверждения: {self.confirm_dt}"
-            f"{None if not self.confirm_dt else self.confirm_dt}"
-        )
+        return f"Заказ {self.id} в статусе {self.status}."
 
     def get_related_products(self) -> list:
-        order_items = list(self.orderitem.all())
+        order_items = self.orderitem.all()
         return order_items
 
     def update_total_cost(self):
-        cost = (
-            self.orderitem
-            .annotate(price=F("product__price") * F("quantity"))
-            .aggregate(total_price=Sum("price"))
-        )
+        cost = self.orderitem.annotate(
+            price=F("product__price") * F("quantity")
+        ).aggregate(total_price=Sum("price"))
         self.total_cost = cost["total_price"] or 0
         self.save()
 
@@ -68,7 +59,9 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="orderitem")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product")
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="product"
+    )
     quantity = models.PositiveIntegerField(default=1)
 
     def save(

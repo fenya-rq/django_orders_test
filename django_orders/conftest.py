@@ -1,3 +1,4 @@
+import shutil
 import random
 from typing import Callable
 from io import BytesIO
@@ -8,6 +9,8 @@ from PIL import Image
 from django.core.files import File
 from django.core.files.storage import default_storage
 from django.core.management import call_command
+
+_not_existing: int = 9999
 
 
 @pytest.fixture(scope="class")
@@ -24,7 +27,8 @@ def create_mock_image():
     file_path = r"uploads/2024/10/14/test_image.jpg"
     file_name = default_storage.save(file_path, File(img_io, name='test_image.jpg'))
     yield file_name
-    file_name.delete()
+    default_storage.delete(file_path)
+    shutil.rmtree("./file_storage/media/uploads/")
 
 
 @pytest.fixture
