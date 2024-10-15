@@ -150,6 +150,7 @@ o = Order.objects.create()
 p = Payment.objects.create(order=o) 
 
 oi = OrderItem.objects.create(order=o, product=pr, quantity=4)
+oi = OrderItem.objects.get(pk=1)
 
 
 """

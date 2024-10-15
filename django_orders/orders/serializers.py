@@ -2,19 +2,33 @@ from rest_framework import serializers
 
 from products.models import Product
 from products.serializers import ProductSerializer
-from .models import Order, OrderStatus
+
+from .models import Order, OrderStatus, OrderItem
+
+
+class OrderItemSerializer(serializers.ModelSerializer):
+
+    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+
+    class Meta:
+        model = OrderItem
+        fields = ["product", "quantity"]
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    products = ProductSerializer(many=True)
+    total_cost = serializers.DecimalField(max_digits=25, decimal_places=2, read_only=True)
+    create_dt = serializers.DateTimeField(read_only=True)
+    confirm_dt = serializers.DateTimeField(read_only=True)
+    status = serializers.CharField(read_only=True)
+    orderitem = OrderItemSerializer(many=True)
 
     class Meta:
         model = Order
-        fields = ["products", "total_cost", "status", "create_dt", "confirm_dt"]
+        fields = ["total_cost", "status", "create_dt", "confirm_dt", "orderitem"]
 
     def create(self, validated_data):
-        products_list = validated_data.pop("products")
+        products_list = validated_data.pop("orderitem")
         order = Order.objects.create(**validated_data)
-        products = [Product.objects.get(id=product["id"]) for product in products_list]
-        order.products.set(products)  # Associate products with the order
+        for product in products_list:
+            OrderItem.objects.create(order=order, product=product["product"], quantity=product["quantity"])
         return order
