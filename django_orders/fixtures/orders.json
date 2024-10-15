@@ -4,8 +4,18 @@
     "pk": 1,
     "fields": {
       "total_cost": 1900,
-      "status": "Ожидает оплаты",
+      "status": "pending",
       "create_dt": "2024-10-10T12:24:46+00:00",
+      "confirm_dt": null
+    }
+  },
+  {
+    "model":  "orders.order",
+    "pk": 2,
+    "fields": {
+      "total_cost": 1000,
+      "status": "paid",
+      "create_dt": "2024-10-11T08:17:46+00:00",
       "confirm_dt": null
     }
   }

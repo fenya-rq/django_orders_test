@@ -33,10 +33,6 @@ class Product(models.Model):
         validators=[PositiveDecimalValidator(max_digits=10, decimal_places=2)],
     )
 
-    class Meta:
-        verbose_name = "Товар"
-        verbose_name_plural = "Товары"
-
     def __str__(self) -> str:
         """
         Returns a string representation of the product.
@@ -66,3 +62,7 @@ class Product(models.Model):
         """
         self.full_clean()
         super().save()
+
+    class Meta:
+        verbose_name = "Товар"
+        verbose_name_plural = "Товары"

@@ -147,9 +147,9 @@ class TestOrder:
         order: Order = Order.objects.create()
         product: Product = Product.objects.get(pk=1)
         OrderItem.objects.create(order=order, product=product, quantity=3)
-        assert order.id == 2
+        assert order.id == 3
         new_order_item_id = order.orderitem.all()[0].id
-        assert new_order_item_id == 3
+        assert new_order_item_id == 4
 
     def test_create_order_error(self):
         """Test creating an Order with invalid fields raises an error."""
@@ -183,6 +183,15 @@ class TestOrder:
         with pytest.raises(ObjectDoesNotExist):
             Order.objects.get(pk=nex).delete()
 
+    def test_update_status(self):
+        """Test updating "status" field of `Order` model after receiving payment."""
+        order: Order = Order.objects.get(pk=1)
+        assert order.status == order.STATUS_CHOICES[0][0]
+        order.update_status()
+        order.save()
+        updated_order: Order = Order.objects.get(pk=1)
+        assert updated_order.status == updated_order.STATUS_CHOICES[1][0]
+
     @pytest.mark.usefixtures("create_mock_image")
     def test_orders_relationship(self, create_mock_image):
         """
@@ -213,5 +222,5 @@ class TestOrder:
         OrderItem.objects.create(order=new_order, product=product_2, quantity=5)
 
         new_order_products: Product = new_order.get_related_products()
-        assert new_order_products[0].id == 3
-        assert new_order_products[1].id == 4
+        assert new_order_products[0].id == 4
+        assert new_order_products[1].id == 5

@@ -1,0 +1,12 @@
+[
+  {
+    "model":  "payments.payment",
+    "pk": 1,
+    "fields": {
+      "order": 2,
+      "cost": 1000,
+      "status": "completed",
+      "payment_type": "Bank Transfer"
+    }
+  }
+]

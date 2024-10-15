@@ -16,5 +16,14 @@
       "product": 2,
       "quantity": 3
     }
+  },
+  {
+    "model": "orders.orderitem",
+    "pk": 3,
+    "fields": {
+      "order": 2,
+      "product": 1,
+      "quantity": 5
+    }
   }
 ]
