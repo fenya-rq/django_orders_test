@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Order, OrderStatus
+from .models import Order
 
 
 class OrderAdmin(admin.ModelAdmin):
@@ -16,9 +16,4 @@ class OrderAdmin(admin.ModelAdmin):
         return False
 
 
-class OrderStatusAdmin(admin.ModelAdmin):
-    pass
-
-
 admin.site.register(Order, OrderAdmin)
-admin.site.register(OrderStatus, OrderStatusAdmin)

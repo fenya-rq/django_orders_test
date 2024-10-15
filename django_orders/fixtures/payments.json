@@ -5,7 +5,7 @@
     "fields": {
       "order": 2,
       "cost": 1000,
-      "status": "completed",
+      "status": "Выполнен успешно",
       "payment_type": "Bank Transfer"
     }
   }

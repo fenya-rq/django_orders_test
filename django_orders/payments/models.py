@@ -18,18 +18,12 @@ class Payment(models.Model):
     - payment_type: The method used for the payment.
     """
 
-    VOIDED = "voided"
-
-    PENDING = "pending"
-    COMPLETED = "completed"
-    FAILED = "failed"
-
-    STATUS_CHOICES = [
-        (PENDING, "В процессе"),
-        (COMPLETED, "Выполнен успешно"),
-        (FAILED, "Платеж не прошел"),
-        (VOIDED, "Удален"),
-    ]
+    STATUS_CHOICES = {
+        "PENDING": "В процессе",
+        "COMPLETED": "Выполнен успешно",
+        "FAILED": "Платеж не прошел",
+        "VOIDED": "Удален",
+    }
 
     PAYMENT_METHOD_CHOICES = [
         ("Credit Card", "Credit Card"),
@@ -48,9 +42,8 @@ class Payment(models.Model):
         max_digits=25, decimal_places=2, default=0.00, verbose_name="Сумма"
     )
     status = models.CharField(
-        max_length=10,
-        choices=STATUS_CHOICES,
-        default=PENDING,
+        max_length=20,
+        default=STATUS_CHOICES["PENDING"],
         verbose_name="Статус",
     )
     payment_type = models.CharField(
@@ -58,10 +51,10 @@ class Payment(models.Model):
     )
 
     def __str__(self) -> str:
-        return f"Заказ с ID{self.id} - {self.status}"
+        return f"Платеж с ID {self.id} - {self.status}"
 
     def void(self):
-        self.status = self.VOIDED
+        self.status = self.STATUS_CHOICES["VOIDED"]
 
     def get_cost(self) -> None:
         """
@@ -79,7 +72,7 @@ class Payment(models.Model):
         accordingly.
         :return: None
         """
-        if self.status == self.STATUS_CHOICES[1][0]:
+        if self.status == self.STATUS_CHOICES["COMPLETED"]:
             self.order.update_status()
 
     def update_order_payment_date(self):
@@ -96,7 +89,7 @@ class Payment(models.Model):
         """
         processing_time = round(random.random(), 2)
         time.sleep(processing_time)
-        self.status = self.STATUS_CHOICES[1][0]
+        self.status = self.STATUS_CHOICES["COMPLETED"]
 
     def save(
         self,
@@ -118,14 +111,14 @@ class Payment(models.Model):
         :param update_field: Fields to update.
         :return: None
         """
-        if self.status == self.VOIDED:
+        if self.status == self.STATUS_CHOICES["VOIDED"]:
             super().save()
             return
         if self.cost == 0:
             self.get_cost()
             self.payment_type = random.choice(self.PAYMENT_METHOD_CHOICES)[1]
             super().save()
-        if self.status == self.STATUS_CHOICES[0][0]:
+        if self.status == self.STATUS_CHOICES["PENDING"]:
             self.imitate_payment_processing()
             super().save()
             self.update_order_status()
@@ -135,7 +128,7 @@ class Payment(models.Model):
         self.void()
         self.save()
         raise ProtectedError(
-            f"Payments cannot be deleted. Payment with ID {self.id}: was avoided",
+            f"Payments cannot be deleted. Payment with ID {self.id}: was voided",
             {Payment},
         )
 

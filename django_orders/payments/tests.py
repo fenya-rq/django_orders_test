@@ -12,7 +12,6 @@ class TestPayment:
     @pytest.fixture(autouse=True)
     def setup_method(self, load_fixture):
         load_fixture("products")
-        load_fixture("orderstatuses")
         load_fixture("orders")
         load_fixture("orderitems")
         load_fixture("payments")

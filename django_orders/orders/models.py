@@ -7,25 +7,6 @@ from django.db.models import Sum, F
 from products.models import Product
 
 
-class OrderStatus(models.Model):
-    """
-    Represents the status of an order.
-
-    Attributes:
-    - status: The status of the order (e.g., 'Pending', 'Paid').
-    """
-
-    status = models.CharField(max_length=15, verbose_name="Статус заказа")
-
-    def __str__(self) -> str:
-        return f"ID: {self.id}, Статус: {self.status}"
-
-    class Meta:
-        verbose_name = "Статус"
-        verbose_name_plural = "Статусы"
-        ordering = ("id",)
-
-
 class Order(models.Model):
     """
     Represents an order with products, status, and costs.
@@ -37,24 +18,22 @@ class Order(models.Model):
     - confirm_dt: The date and time the order was confirmed.
     """
 
-    PENDING = "pending"
-    PAID = "paid"
-    CONFIRMED = "confirmed"
-
-    STATUS_CHOICES = [
-        (PENDING, "Ожидает оплаты"),
-        (PAID, "Оплачен"),
-        (CONFIRMED, "Подтвержден"),
-    ]
+    STATUS_CHOICES = {
+        "PENDING": "Ожидает оплаты",
+        "PAID": "Оплачен",
+        "CONFIRMED": "Подтвержден",
+    }
 
     total_cost = models.DecimalField(
         max_digits=10, decimal_places=2, default=0.00, verbose_name="Итоговая сумма"
     )
     status = models.CharField(
-        max_length=20, choices=STATUS_CHOICES, default=PENDING, verbose_name="Статус"
+        max_length=20, default=STATUS_CHOICES["PENDING"], verbose_name="Статус"
     )
     create_dt = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-    payment_dt = models.DateTimeField(default=None, null=True, verbose_name="Дата оплаты")
+    payment_dt = models.DateTimeField(
+        default=None, null=True, verbose_name="Дата оплаты"
+    )
     confirm_dt = models.DateTimeField(
         default=None, null=True, verbose_name="Время подтверждения"
     )
@@ -90,7 +69,7 @@ class Order(models.Model):
 
         :return: None
         """
-        self.status = self.STATUS_CHOICES[1][0]
+        self.status = self.STATUS_CHOICES["PAID"]
         self.save()
 
     def update_payment_date(self):

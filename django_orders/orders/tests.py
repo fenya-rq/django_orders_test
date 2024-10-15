@@ -1,64 +1,11 @@
 import pytest
 
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.db.utils import DataError, IntegrityError
+from django.db.utils import IntegrityError
 
 from conftest import _not_existing as nex
 from products.models import Product
-from .models import OrderStatus, Order, OrderItem
-
-
-@pytest.mark.django_db
-class TestOrderStatuses:
-    @pytest.fixture(autouse=True)
-    def setup_method(self, load_fixture):
-        """Load the order statuses fixture for each test method."""
-        load_fixture("orderstatuses")
-
-    def test_get_order_status_ok(self):
-        """Test retrieving an existing OrderStatus instance by primary key."""
-        order_status: OrderStatus = OrderStatus.objects.get(pk=1)
-        assert isinstance(order_status, OrderStatus)
-
-    def test_get_order_status_error(self):
-        """Test retrieving a non-existent OrderStatus raises an error."""
-        with pytest.raises(ObjectDoesNotExist):
-            OrderStatus.objects.get(pk=nex)
-
-    def test_create_order_status_ok(self):
-        """Test creating a new OrderStatus instance successfully."""
-        order_status: OrderStatus = OrderStatus.objects.create(status="test")
-        assert isinstance(order_status, OrderStatus)
-
-    def test_create_order_status_error(self):
-        """Test creating OrderStatus with invalid fields raises an error."""
-        with pytest.raises(TypeError):
-            OrderStatus.objects.create(sts="test")
-
-    def test_update_order_status_ok(self):
-        """Test updating an existing OrderStatus instance successfully."""
-        order_status: OrderStatus = OrderStatus.objects.get(pk=1)
-        order_status.status = "Подтвержден"
-        order_status.save()
-        new_order_status: OrderStatus = OrderStatus.objects.get(pk=1)
-        assert new_order_status.status == "Подтвержден"
-
-    def test_update_order_status_error(self):
-        """Test updating OrderStatus with invalid data raises an error."""
-        order_status: OrderStatus = OrderStatus.objects.get(pk=1)
-        order_status.status = "_" * 50
-        with pytest.raises(DataError):
-            order_status.save()
-
-    def test_delete_order_status_ok(self):
-        """Test deleting an existing OrderStatus instance successfully."""
-        order_status: OrderStatus = OrderStatus.objects.get(pk=1).delete()
-        assert order_status
-
-    def test_delete_order_status_error(self):
-        """Test deleting a non-existent OrderStatus raises an error."""
-        with pytest.raises(ObjectDoesNotExist):
-            OrderStatus.objects.get(pk=nex).delete()
+from .models import Order, OrderItem
 
 
 @pytest.mark.django_db
@@ -67,7 +14,6 @@ class TestOrderItem:
     def setup_method(self, load_fixture):
         """Load required fixtures for OrderItem tests."""
         load_fixture("products")
-        load_fixture("orderstatuses")
         load_fixture("orders")
         load_fixture("orderitems")
 
@@ -127,7 +73,6 @@ class TestOrder:
     def setup_method(self, load_fixture):
         """Load required fixtures for Order tests."""
         load_fixture("products")
-        load_fixture("orderstatuses")
         load_fixture("orders")
         load_fixture("orderitems")
 
@@ -185,11 +130,11 @@ class TestOrder:
     def test_update_status(self):
         """Test updating "status" field of `Order` model after receiving payment."""
         order: Order = Order.objects.get(pk=1)
-        assert order.status == order.STATUS_CHOICES[0][0]
+        assert order.status == order.STATUS_CHOICES["PENDING"]
         order.update_status()
         order.save()
         updated_order: Order = Order.objects.get(pk=1)
-        assert updated_order.status == updated_order.STATUS_CHOICES[1][0]
+        assert updated_order.status == updated_order.STATUS_CHOICES["PAID"]
 
     @pytest.mark.usefixtures("create_mock_image")
     def test_orders_relationship(self, create_mock_image):
