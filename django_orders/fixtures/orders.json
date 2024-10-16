@@ -16,6 +16,7 @@
       "total_cost": 1000,
       "status": "Оплачен",
       "create_dt": "2024-10-11T08:17:46+00:00",
+      "payment_dt": "2024-10-11T09:06:15+00:00",
       "confirm_dt": null
     }
   }

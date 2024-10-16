@@ -5,7 +5,9 @@ from .models import Payment
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-    order = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all())
+    order = serializers.PrimaryKeyRelatedField(
+        queryset=Order.objects.all(), required=True
+    )
     cost = serializers.DecimalField(max_digits=25, decimal_places=2, read_only=True)
     status = serializers.CharField(read_only=True)
     payment_type = serializers.CharField(read_only=True)

@@ -18,6 +18,7 @@ psycopg2-binary = "2.9.9"
 pillow = "10.4.0"
 mypy = "1.11.2"
 django-stubs = "5.1.0"
+requests = "2.32.3"
 
 [tool.pytest.ini_options]
 addopts = "-q --cov"

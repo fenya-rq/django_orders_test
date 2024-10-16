@@ -5,7 +5,10 @@ from .models import Order, OrderItem
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    product = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), required=True
+    )
+    quantity = serializers.IntegerField(required=True)
 
     class Meta:
         model = OrderItem
@@ -19,11 +22,12 @@ class OrderSerializer(serializers.ModelSerializer):
     create_dt = serializers.DateTimeField(read_only=True)
     confirm_dt = serializers.DateTimeField(read_only=True)
     status = serializers.CharField(read_only=True)
-    orderitem = OrderItemSerializer(many=True)
+    id = serializers.IntegerField(read_only=True)
+    orderitem = OrderItemSerializer(many=True, required=True)
 
     class Meta:
         model = Order
-        fields = ["total_cost", "status", "create_dt", "confirm_dt", "orderitem"]
+        fields = ["id", "total_cost", "status", "create_dt", "confirm_dt", "orderitem"]
 
     def create(self, validated_data):
         products_list = validated_data.pop("orderitem")

@@ -22,7 +22,7 @@ env = environ.Env()
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env.str("SECRET_KEY")django-insecure-z65s4yvj0isb4ro#@5qluyd47bq9gbt((-s+0apm5&t2*=s$e^"
+SECRET_KEY = env.str("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.str("DEBUG")
@@ -124,3 +124,6 @@ MEDIA_URL = "/media/"
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Configs to sevice layer
+SEND_ORDER_DATA_URL = "https://webhook.site/36693e00-8f59-4f7b-9a85-1d1e7ddde4d4"

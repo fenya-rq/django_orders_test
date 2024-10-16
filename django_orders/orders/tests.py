@@ -47,7 +47,6 @@ class TestOrderItem:
         product: Product = Product.objects.get(pk=1)
         order_item.product = product
         order_item.save()
-        order_item: OrderItem = OrderItem.objects.get(pk=1)
         assert order_item.product == product
 
     def test_update_orderitem_error(self):
@@ -127,14 +126,21 @@ class TestOrder:
         with pytest.raises(ObjectDoesNotExist):
             Order.objects.get(pk=nex).delete()
 
-    def test_update_status(self):
+    def test_update_payment_status(self):
         """Test updating "status" field of `Order` model after receiving payment."""
         order: Order = Order.objects.get(pk=1)
         assert order.status == order.STATUS_CHOICES["PENDING"]
-        order.update_status()
+        order.update_payment_status()
         order.save()
-        updated_order: Order = Order.objects.get(pk=1)
-        assert updated_order.status == updated_order.STATUS_CHOICES["PAID"]
+        assert order.status == order.STATUS_CHOICES["PAID"]
+
+    def test_update_confirmation_status(self):
+        """Test updating "status" field of `Order` model after receiving payment."""
+        order: Order = Order.objects.get(pk=2)
+        assert order.status == order.STATUS_CHOICES["PAID"]
+        order.update_confirmation_status()
+        order.save()
+        assert order.status == order.STATUS_CHOICES["CONFIRMED"]
 
     @pytest.mark.usefixtures("create_mock_image")
     def test_orders_relationship(self, create_mock_image):

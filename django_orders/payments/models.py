@@ -73,7 +73,7 @@ class Payment(models.Model):
         :return: None
         """
         if self.status == self.STATUS_CHOICES["COMPLETED"]:
-            self.order.update_status()
+            self.order.update_payment_status()
 
     def update_order_payment_date(self):
         self.order.update_payment_date()

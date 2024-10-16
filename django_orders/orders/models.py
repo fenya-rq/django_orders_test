@@ -39,7 +39,7 @@ class Order(models.Model):
     )
 
     def __str__(self) -> str:
-        return f"Заказ {self.id} в статусе {self.status}."
+        return f"Заказ № {self.id} в статусе {self.status}."
 
     def get_related_products(self) -> QuerySet:
         """
@@ -63,7 +63,7 @@ class Order(models.Model):
         self.total_cost = cost["total_price"] or 0
         self.save()
 
-    def update_status(self) -> None:
+    def update_payment_status(self) -> None:
         """
         Updates the status of the order to 'Paid' after payment.
 
@@ -72,8 +72,23 @@ class Order(models.Model):
         self.status = self.STATUS_CHOICES["PAID"]
         self.save()
 
+    def update_confirmation_status(self) -> None:
+        """
+        Updates the status of the order to 'Confirmed'
+        after confirmation.
+
+        :return: None
+        """
+        if self.payment_dt and self.status != self.STATUS_CHOICES["CONFIRMED"]:
+            self.status = self.STATUS_CHOICES["CONFIRMED"]
+            self.save()
+
     def update_payment_date(self):
         self.payment_dt = datetime.datetime.now(tz=datetime.timezone.utc)
+        self.save()
+
+    def update_confirm_date(self):
+        self.confirm_dt = datetime.datetime.now(tz=datetime.timezone.utc)
         self.save()
 
     class Meta:
