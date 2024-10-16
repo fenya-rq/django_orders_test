@@ -70,17 +70,17 @@ https://python-poetry.org/docs/#installing-with-the-official-installer
 
 Скачиваем репозиторий в нужную директорию:
 
-    git clone https://github.com/fenya-rq/django_fs_test.git
+    git clone https://github.com/fenya-rq/django_orders_test.git
 Переходим:
 
-    cd django_fs_test
+    cd django_orders_test
 Устанавливаем зависимости и активируем окружение:
 
     poetry install
     poetry shell
 Переходим:
 
-    cd django_fs/django_fs
+    cd django_orders/django_orders
 В этой директории необходимо создать **.env** файл, скопировать содержимое файла **.env.dist**
 и указать свои данные для подключения к БД.
 
