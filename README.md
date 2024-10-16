@@ -93,6 +93,9 @@ https://python-poetry.org/docs/#installing-with-the-official-installer
 После чего создаем пользователя-админа:
 
     poetry run python manage.py createsuperuser
+Если хотим иметь немного моковых данных в БД - загружаем фикстуры:
+
+    poetry run python manage.py loaddata products orders orderitems payments
 Запуск тестов и выдача процента покрытия тестами:
 
     poetry run pytest
