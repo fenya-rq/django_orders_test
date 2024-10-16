@@ -29,8 +29,14 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ["id", "total_cost", "status", "create_dt", "confirm_dt", "orderitem"]
 
+    def check_products(self, products):
+        if not products:
+            raise serializers.ValidationError("The order must contain at least one product.")
+
     def create(self, validated_data):
         products_list = validated_data.pop("orderitem")
+
+        self.check_products(products_list)
         order = Order.objects.create(**validated_data)
         for product in products_list:
             OrderItem.objects.create(

@@ -3,6 +3,7 @@ import time
 
 from django.db import models
 from django.db.models import ProtectedError
+from rest_framework.serializers import ValidationError
 
 from orders.models import Order
 
@@ -111,6 +112,8 @@ class Payment(models.Model):
         :param update_field: Fields to update.
         :return: None
         """
+        if self.order.status == self.order.STATUS_CHOICES["PAID"]:
+            raise ValidationError("Невозмонжо провести платеж - заказ уже оплачен.")
         if self.status == self.STATUS_CHOICES["VOIDED"]:
             super().save()
             return

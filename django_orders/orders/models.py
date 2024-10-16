@@ -69,8 +69,12 @@ class Order(models.Model):
 
         :return: None
         """
-        self.status = self.STATUS_CHOICES["PAID"]
-        self.save()
+        total_paid = self.payment.all().aggregate(total=Sum("cost"))
+        print(self.total_cost)
+        print(total_paid["total"])
+        if total_paid["total"] == self.total_cost:
+            self.status = self.STATUS_CHOICES["PAID"]
+            self.save()
 
     def update_confirmation_status(self) -> None:
         """
