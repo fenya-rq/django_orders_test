@@ -2,7 +2,7 @@ import random
 import time
 
 from django.db import models
-from django.db.models import ProtectedError
+from django.db.models import ProtectedError, QuerySet
 from rest_framework.serializers import ValidationError
 
 from orders.models import Order
@@ -26,12 +26,6 @@ class Payment(models.Model):
         "VOIDED": "Удален",
     }
 
-    PAYMENT_METHOD_CHOICES = [
-        ("Credit Card", "Credit Card"),
-        ("PayPal", "PayPal"),
-        ("Bank Transfer", "Bank Transfer"),
-    ]
-
     order = models.ForeignKey(
         Order,
         on_delete=models.PROTECT,
@@ -48,22 +42,28 @@ class Payment(models.Model):
         verbose_name="Статус",
     )
     payment_type = models.CharField(
-        max_length=25, choices=PAYMENT_METHOD_CHOICES, verbose_name="Тип оплаты"
+        max_length=25, verbose_name="Тип оплаты"
     )
 
     def __str__(self) -> str:
         return f"Платеж с ID {self.id} - {self.status}"
 
-    def void(self):
+    def void(self) -> None:
         self.status = self.STATUS_CHOICES["VOIDED"]
 
-    def get_cost(self) -> None:
+    def check_voided(self):
+        if self.status == self.STATUS_CHOICES["VOIDED"]:
+            super().save()
+
+    def get_order_cost(self) -> None:
         """
         Updates the payment's cost based on the related order's total cost.
 
         :return: None
         """
         self.cost = self.order.total_cost
+        if self.cost == 0:
+            super().save()
 
     def update_order_status(self) -> None:
         """
@@ -76,10 +76,10 @@ class Payment(models.Model):
         if self.status == self.STATUS_CHOICES["COMPLETED"]:
             self.order.update_payment_status()
 
-    def update_order_payment_date(self):
+    def update_order_payment_date(self) -> None:
         self.order.update_payment_date()
 
-    def imitate_payment_processing(self):
+    def imitate_payment_processing(self) -> None:
         """
         Simulates payment processing by adding a delay and updating
         the status.
@@ -91,6 +91,22 @@ class Payment(models.Model):
         processing_time = round(random.random(), 2)
         time.sleep(processing_time)
         self.status = self.STATUS_CHOICES["COMPLETED"]
+
+    def check_if_new_payment(self) -> bool:
+        if self.id is None:
+            return True
+        return False
+
+    def check_overpay(self) -> None:
+        if self.order.status == self.order.STATUS_CHOICES["PAID"]:
+            raise ValidationError("Невозмонжо провести платеж - заказ уже оплачен.")
+
+    def process_payment(self) -> None:
+        if self.status == self.STATUS_CHOICES["PENDING"]:
+            self.imitate_payment_processing()
+            super().save()
+            self.update_order_status()
+            self.update_order_payment_date()
 
     def save(
         self,
@@ -112,20 +128,12 @@ class Payment(models.Model):
         :param update_field: Fields to update.
         :return: None
         """
-        if self.order.status == self.order.STATUS_CHOICES["PAID"]:
-            raise ValidationError("Невозмонжо провести платеж - заказ уже оплачен.")
-        if self.status == self.STATUS_CHOICES["VOIDED"]:
-            super().save()
-            return
-        if self.cost == 0:
-            self.get_cost()
-            self.payment_type = random.choice(self.PAYMENT_METHOD_CHOICES)[1]
-            super().save()
-        if self.status == self.STATUS_CHOICES["PENDING"]:
-            self.imitate_payment_processing()
-            super().save()
-            self.update_order_status()
-            self.update_order_payment_date()
+        if self.check_if_new_payment():
+            self.check_overpay()
+        super().save()
+        self.get_order_cost()
+        self.process_payment()
+        self.check_voided()
 
     def delete(self, using=None, keep_parents=False):
         self.void()
@@ -138,3 +146,4 @@ class Payment(models.Model):
     class Meta:
         verbose_name = "Платеж"
         verbose_name_plural = "Платежи"
+        ordering = ["id"]

@@ -1,6 +1,7 @@
 import pytest
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import ProtectedError
+from rest_framework.exceptions import ValidationError
 
 from conftest import _not_existing as nex
 from orders.models import Order
@@ -44,6 +45,11 @@ class TestPayment:
         payment: Payment = Payment.objects.get(pk=1)
         with pytest.raises(ValueError):
             payment.order = 3
+
+    def test_overpayment_error(self):
+        order: Order = Order.objects.get(pk=2)
+        with pytest.raises(ValidationError):
+            Payment.objects.create(order=order)
 
     def test_delete_payment_ok(self):
         with pytest.raises(ProtectedError):

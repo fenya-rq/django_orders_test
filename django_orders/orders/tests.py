@@ -5,6 +5,7 @@ from django.db.utils import IntegrityError
 
 from conftest import _not_existing as nex
 from products.models import Product
+from payments.models import Payment
 from .models import Order, OrderItem
 
 
@@ -130,8 +131,7 @@ class TestOrder:
         """Test updating "status" field of `Order` model after receiving payment."""
         order: Order = Order.objects.get(pk=1)
         assert order.status == order.STATUS_CHOICES["PENDING"]
-        order.update_payment_status()
-        order.save()
+        Payment.objects.create(order=order)
         assert order.status == order.STATUS_CHOICES["PAID"]
 
     def test_update_confirmation_status(self):

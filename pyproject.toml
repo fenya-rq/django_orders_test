@@ -21,7 +21,7 @@ django-stubs = "5.1.0"
 requests = "2.32.3"
 
 [tool.pytest.ini_options]
-addopts = "-q --cov"
+addopts = "-q --cov --cov-config=.coveragerc"
 DJANGO_SETTINGS_MODULE = "django_orders.settings"
 python_files = "test.py tests.py"
 
